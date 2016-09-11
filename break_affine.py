@@ -1,5 +1,6 @@
 # this code cracks the affine cipher
 import re
+import sys
 from ngram_score import ngram_score
 fitness = ngram_score('quadgrams.txt') # load our quadgram statistics
 from pycipher import Affine
@@ -14,7 +15,13 @@ def break_affine(ctext):
     return max(scores)
     
 # example ciphertext
-ctext = 'QUVNLAUVILZKVZZZVNHIVQUFSFZHWZQLQHQLJSNLAUVI'
+ctext = ''
+if (len(sys.argv) >= 2):
+	with open(sys.argv[1], "r") as f:
+		ctext = str(f.read())
+	print("Cipher text: " + ctext)
+else:
+	print("Usage: " + sys.argv[0] + " filename")
 max_key = break_affine(ctext)
 
 print 'best candidate with key (a,b) = '+str(max_key[1])+':'

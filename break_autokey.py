@@ -1,11 +1,18 @@
 from ngram_score import ngram_score
 from pycipher import Autokey
+import sys
 import re
 from itertools import permutations
 
 qgram = ngram_score('quadgrams.txt')
 trigram = ngram_score('trigrams.txt')
-ctext = 'isjiqymdebvuzrvwhmvysibugzhyinmiyeiklcvioimbninyksmmnjmgalvimlhspjxmgfiraqlhjcpvolqmnyynhpdetoxemgnoxl'
+ctext = ''
+if (len(sys.argv) >= 2):
+	with open(sys.argv[1], "r") as f:
+		ctext = str(f.read())
+	print("Cipher text: " + ctext)
+else:
+	print("Usage: " + sys.argv[0] + " filename")
 ctext = re.sub(r'[^A-Z]','',ctext.upper())
 
 # keep a list of the N best things we have seen, discard anything else
@@ -27,6 +34,7 @@ class nbest(object):
 
 #init
 N=100
+bestfitness, bestfitnesskey = 0, ""
 for KLEN in range(3,20):
     rec = nbest(N)
 
@@ -61,5 +69,8 @@ for KLEN in range(3,20):
             bestkey = rec[i][1]
             bestscore = score       
     print bestscore,'autokey, klen',KLEN,':"'+bestkey+'",',Autokey(bestkey).decipher(ctext)
-    
+    if bestscore < bestfitness:
+		bestfitness = bestscore
+		bestfitnesskey = bestkey
 
+print("best fitness results: "+str(bestfitness),'autokey, klen',string.length(bestfitnesskey),':"'+bestfitnesskey+'",',Autokey(bestfitnesskey).decipher(ctext))
